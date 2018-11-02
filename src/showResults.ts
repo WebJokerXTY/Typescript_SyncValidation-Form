@@ -1,6 +1,11 @@
-const sleep = (ms: number) => new Promise((resolve: Function) => setTimeout(resolve, ms));
+function sleep(ms: number) {
+    new Promise((resolve: Function) =>{
+        setTimeout(resolve, ms);
+        resolve();
+    });
+};
 
-export default (async function showResults(values: object) {
-    await sleep(500);
-    window.alert(`You submitted:\n\n${JSON.stringify(values, null, 2)}`)
-});
+export function showResults(values: object) {
+    sleep(500);
+    window.alert(`You submitted:\n\n${JSON.stringify(values, null, 2)}`);
+};

@@ -1,7 +1,12 @@
 import * as React from 'react';
-import { Field, reduxForm } from 'redux-form';
+import { Field, InjectedFormProps, WrappedFieldProps, reduxForm } from 'redux-form';
 
-const validate = (values: any) => {
+export interface FormData {
+    name: string;
+    email: string;
+}
+
+const validate = (values: FormData) => {
     const errors = {
         name: '',
         email: ''
@@ -19,7 +24,7 @@ const validate = (values: any) => {
     return errors
 }
 
-const warn = (values: any) => {
+const warn = (values: FormData) => {
     const warnings = {
         name: ''
     }
@@ -29,7 +34,7 @@ const warn = (values: any) => {
     return warnings
 }
 
-const renderField = (field: any) => (
+const renderField= (field: WrappedFieldProps & any) => (
     <div>
         <label>{field.label}</label>
         <div>
@@ -39,24 +44,26 @@ const renderField = (field: any) => (
     </div>
 )
 
-const Form = (props: any) => {
-    const { handleSubmit, pristine, reset, submitting } = props;
-    return(
-        <form onSubmit = {handleSubmit}>
-            <div>
-                <Field name = "name" component = {renderField} type = "text" label = "Name" />
-                <Field name = "email" component = {renderField} type = "email" label = "Email" />
-            </div>
-            <div>
-                <button type = "submit" disabled = {submitting}>Submit</button>
-                <button type = "button" disabled = {pristine || submitting} onClick = {reset}>Clear Values</button>
-            </div>
-        </form>
-    )
+class FormComponent extends React.Component<InjectedFormProps<FormData, {}, string>, any> {
+    render() {
+        const { handleSubmit, pristine, reset, submitting } = this.props;
+        return(
+            <form onSubmit = {handleSubmit}>
+                <div>
+                    <Field name = "name" component = {renderField} type = "text" label = "Name" />
+                    <Field name = "email" component = {renderField} type = "email" label = "Email" />
+                </div>
+                <div>
+                    <button type = "submit" disabled = {submitting}>Submit</button>
+                    <button type = "button" disabled = {pristine || submitting} onClick = {reset}>Clear Values</button>
+                </div>
+            </form>
+        )
+    }
 }
 
-export default reduxForm({
+export const Form = reduxForm({
     form: 'test',
     validate,
     warn
-})(Form);
+})(FormComponent);
